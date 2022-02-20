@@ -1,0 +1,70 @@
+{
+  "name": "miarin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ts-node-dev --respawn --transpile-only --poll ./src/index.ts",
+    "lint": "prettier --write .",
+    "build": "rd /s /q dist && tsc",
+    "start": "node --experimental-json-modules index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D3STD/Miarin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/D3STD/Miarin/issues"
+  },
+  "homepage": "https://github.com/D3STD/Miarin#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn dlx @yarnpkg/doctor && lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "prettier --write",
+    "*.js": "prettier --write"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-angular"
+    ],
+    "rules": {
+      "scope-case": [
+        2,
+        "always",
+        "pascal-case"
+      ],
+      "type-enum": [
+        2,
+        "always",
+        [
+          "chore",
+          "build",
+          "ci",
+          "docs",
+          "feat",
+          "fix",
+          "perf",
+          "refactor",
+          "revert",
+          "style",
+          "test"
+        ]
+      ]
+    }
+  },
+  "dependencies": {
+    "@discordjs/rest": "^0.3.0",
+    "chalk": "^5.0.0",
+    "discord-api-types": "^0.27.2",
+    "discord.js": "^13.6.0",
+    "mongodb": "^4.4.0"
+  }
+}
