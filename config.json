@@ -1,1 +1,7 @@
-{}
+{
+    "nodes": [{
+        "name": "Shizuku",
+        "url": "localhost:2333",
+        "auth": "KHSauzygYFUY21FGWY"
+    }]
+}

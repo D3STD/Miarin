@@ -1,4 +1,7 @@
-import { Shoukaku, Libraries, NodeOptions } from 'shoukaku';
+import shoukaku from 'shoukaku';
+const { Shoukaku, Libraries } = shoukaku;
+import { NodeOptions } from 'shoukaku';
+// Жс хуйня не дает сделать нормальный импорт
 import { Collection } from 'discord.js';
 import * as liblog from '../libs/logger.js';
 
@@ -6,11 +9,11 @@ import { QueryElement } from '../types/QueryElement';
 
 export class LibShoukaku {
 	public query: Collection<string, Array<QueryElement>> = new Collection()
-    public player: Shoukaku;
+    public player;
 
-    constructor( nodes: Array<NodeOptions>, options?: Object )
+    constructor( client, nodes: Array<NodeOptions>, options?: Object )
     {
-        this.player = new Shoukaku( new Libraries.DiscordJS(bot), nodes, options );
+        this.player = new Shoukaku( new Libraries.DiscordJS(client), nodes, options );
 
         this.player.on( 'ready', name => liblog.success( `Нода ${name} запущенаи готова к работе`, 'Shoukaku' ) )
         this.player.on( 'error', ( name, error ) => liblog.error( `Ошибка в ноде: ${name}`, error, 'Shoukaku' ) )
@@ -18,7 +21,7 @@ export class LibShoukaku {
         this.player.on( 'disconnect', ( name, reason ) => liblog.info( `Нода: ${name}\nПричина: ${reason?.length > 1 ? reason : 'Без причины'}`, 'Shoukaku' ) )
     }
 
-    get client(): Shoukaku {
+    get client() {
         return this.player;
     }
 

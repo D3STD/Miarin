@@ -66,6 +66,7 @@
     "discord-api-types": "^0.27.2",
     "discord.js": "^13.6.0",
     "mongodb": "^4.4.0",
+    "node-fetch": "^3.2.0",
     "shoukaku": "^2.1.4"
   }
 }

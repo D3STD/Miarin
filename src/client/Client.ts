@@ -3,6 +3,7 @@ import { Client, Collection } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'fs';
+import { LibShoukaku } from '../libs/libshoukaku.js';
 
 import { Command } from '../types/Command';
 
@@ -13,6 +14,7 @@ class Bot {
     public mongo: MongoClient;
     private _mongo: string;
     private token: string;
+	public shoukaku: LibShoukaku;
 
     public commands: Collection<string, Command>;
 
@@ -48,10 +50,7 @@ class Bot {
 		this.client.on( 'interactionCreate', async ( interaction ) => {
 			if ( interaction.isAutocomplete() ) {
                 const command = bot.commands.find( ( command ) => command.info.name === interaction.commandName );
-                if ( interaction.options.getSubcommand() !== null ) {
-                    const subcommand = bot.commands.find( c => c.info.name === interaction.options.getSubcommand() && c.info.parentOf === interaction.commandName );
-                    if ( subcommand ) await subcommand.executeAC( interaction );
-                } else await command.executeAC( interaction );
+				await command.executeAC( interaction );
 			}
 			if ( !interaction.isCommand() ) { return; }
 			const command = this.commands.find( ( command ) => command.info.name === interaction.commandName );
@@ -69,6 +68,13 @@ class Bot {
 	async init() {
 		if ( this._mongo ) { this.mongo = await new MongoClient(this._mongo).connect(); }
 		await this.client.login( this.token );
+		this.shoukaku = new LibShoukaku( this.client, this.config.nodes, {
+			moveOnDisconnect: false,
+			resumable: true,
+			resumableTimeout: 10,
+			reconnectTries: 2,
+			restTimeout: 10000
+		} );
 		return this;
 	}
 
