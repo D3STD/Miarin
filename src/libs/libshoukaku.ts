@@ -18,11 +18,11 @@ export class LibShoukaku {
         this.player.on( 'disconnect', ( name, reason ) => liblog.info( `Нода: ${name}\nПричина: ${reason?.length > 1 ? reason : 'Без причины'}`, 'Shoukaku' ) )
     }
 
-    get client() {
+    get client(): Shoukaku {
         return this.player;
     }
 
-    async addQuery( id, element: QueryElement ) {
+    addQuery( id, element: QueryElement ): Array<QueryElement> {
         if ( !this.query.has(id) ) this.query.set( id, [] );
 
         this.query.get( id ).push( element );
@@ -34,11 +34,13 @@ export class LibShoukaku {
         return this.query.get( id );
     }
 
-    removeQuery( id: string, position?: number ) {
-		if ( !position ) return this.query.delete( id );
-        else {
+    removeQuery( id: string, full: boolean = false ): Array<QueryElement> {
+		if ( full ) this.query.delete( id );
+        else if ( !full ) {
             const noElement = this.query.get( id ).splice(0, 1);
-			return this.query.set( id, noElement );
+			this.query.set( id, noElement );
 		}
+
+        return this.query.get( id );
 	}
 }
