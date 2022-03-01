@@ -6,9 +6,11 @@ import { Collection } from 'discord.js';
 import * as liblog from '../libs/logger.js';
 
 import { QueryElement } from '../types/QueryElement';
+import { PlayerSettings } from '../types/PlayerSettings.js';
 
 export class LibShoukaku {
 	public query: Collection<string, Array<QueryElement>> = new Collection()
+    public playerSettings: Collection<string, PlayerSettings> = new Collection()
     public player;
 
     constructor( client, nodes: Array<NodeOptions>, options?: Object )
@@ -31,7 +33,7 @@ export class LibShoukaku {
         this.query.get( id ).push( element );
         bot.client.emit( 'queryAdd', {
             id,
-            element
+            song: element
         } );
 
         return this.query.get( id );
@@ -45,5 +47,18 @@ export class LibShoukaku {
 		}
 
         return this.query.get( id );
+	}
+
+    getQuery( id: string ): Array<QueryElement> {
+        return this.query.get( id );
+    }
+
+    setPlayerSettings( id: string, settings: PlayerSettings ): void {
+		this.playerSettings.set( id, settings );
+        return;
+	}
+
+	getPlayerSettings( id: string ): PlayerSettings {
+		return this.playerSettings.get( id ) ?? null;
 	}
 }
