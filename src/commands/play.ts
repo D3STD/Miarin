@@ -59,7 +59,7 @@ export const execute = async( interaction ) => {
     let rowController = new ButtonsRowController( interaction, player );
 
     const collector = interaction.channel.createMessageComponentCollector( {
-		filter: () => { return true }, time: 147483647
+		filter: (message) => { return message.user.id == bot.shoukaku.getQuery(interaction.guild.id)[0]?.requester }, time: 147483647
 	} );
 
     collector.on( 'collect', async ( i ) => {
@@ -69,26 +69,24 @@ export const execute = async( interaction ) => {
 
     bot.client.on( 'queryAdd', async ({ id, song }) => {
         if ( !id === interaction.guild.id ) return;
-
+        
         if ( !player.track ) {
             player.playTrack( song.track );
             interaction.reply({ embeds: [ await buildEmbed( song, interaction, player ) ], components: rowController.buildRow() });
-        }
+        } else interaction.editReply( { components: rowController.buildRow() } );
     })
 
     player.on('end', async () => {
         if ( bot.shoukaku.getPlayerSettings( interaction.guild.id )?.repeat === true ) {
             return player.playTrack( bot.shoukaku.getQuery(interaction.guild.id)[0]?.track );
         } else {
-            if (bot.shoukaku.getQuery(interaction.guild.id)?.length >= 1) {
-                console.log(bot.shoukaku.getQuery(interaction.guild.id)[0]?.track.info.title);
+            if (bot.shoukaku.getQuery(interaction.guild.id)?.length >= 2) {
                 bot.shoukaku.removeQuery( interaction.guild.id );
-                console.log(bot.shoukaku.getQuery(interaction.guild.id)[0]?.track.info.title);
-                return player.playTrack( bot.shoukaku.getQuery(interaction.guild.id)[0]?.track );
+                player.playTrack( bot.shoukaku.getQuery(interaction.guild.id)[0]?.track );
+                return await interaction.editReply({ embeds: [ await buildEmbed( bot.shoukaku.getQuery(interaction.guild.id)[0], interaction, player ) ], components: rowController.buildRow(), content: null });
             } else {
-                // разобратся с хуйней
                 bot.shoukaku.removeQuery( interaction.guild.id, true );
-                return await interaction.editReply( { content: 'Плейлист пуст', embeds: [], components: [] } );
+                await interaction.editReply('Плейлист пуст');
             }
         }
     })
@@ -118,20 +116,22 @@ export const execute = async( interaction ) => {
 };
 
 export const executeAC = async ( interaction ) => {
-    console.log(interaction.options.get('song').value)
-    if ( interaction.options.get('song').value.length < 3 ) return interaction.respond( null );
-    const node = bot.shoukaku.client.getNode();
-    const data: any = await node.rest.resolve( interaction.options.get('song').value, 'youtube' );
-    if ( data.tracks.length < 1 ) return interaction.respond( null );
-    const respond: Array<{ name: string, value: string }> = [];
-    data.tracks.forEach( ( song ) => {
-        song = song.info;
-        if (song.title.length > 25) song.title = song.title.slice(0, 25) + '...';
-        if (song.author.length > 15) song.title = song.title.slice(0, 15) + '...';
-        return respond.push({
-            name: `${song.title} от ${song.author}`,
-            value: `${song.title} ${song.author}`
-        })
-    });
-    interaction.respond(respond)
+    try {
+        if ( interaction.options.get('song').value.length < 3 ) return interaction.respond( null );
+        const node = bot.shoukaku.client.getNode();
+        const data: any = await node.rest.resolve( interaction.options.get('song').value, 'youtube' );
+        if ( data.tracks.length < 1 ) return interaction.respond( null );
+        const respond: Array<{ name: string, value: string }> = [];
+        data.tracks.forEach( ( song ) => {
+            song = song.info;
+            if (song.title.length > 25) song.title = song.title.slice(0, 25) + '...';
+            if (song.author.length > 15) song.title = song.title.slice(0, 15) + '...';
+            return respond.push({
+                name: `${song.title} от ${song.author}`,
+                value: `${song.title} ${song.author}`
+            })
+        });
+        interaction.respond(respond)
+    }
+    catch ( e ) { null }
 }

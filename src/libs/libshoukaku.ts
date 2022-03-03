@@ -42,8 +42,7 @@ export class LibShoukaku {
     removeQuery( id: string, full: boolean = false ): Array<QueryElement> {
 		if ( full ) this.query.delete( id );
         else if ( !full ) {
-            const noElement = this.query.get( id ).splice(0, 1);
-			this.query.set( id, noElement );
+            this.query.get( id ).shift();
 		}
 
         return this.query.get( id );
