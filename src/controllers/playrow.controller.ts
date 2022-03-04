@@ -1,7 +1,12 @@
 import { MessageActionRow, MessageButton, CommandInteraction, ButtonInteraction } from 'discord.js';
 import { ShoukakuPlayer } from 'shoukaku';
-
-export class ButtonsRowController {
+export interface Controller<T, A> {
+	resolve(data: A) -> Promise<T>
+}
+export interface ButtonRowController extends Controller<ButtonInteraction, void> {
+	buildRow(): MessageActionRow[]
+}
+export class MusicButtonsController implements ButtonRowController {
     public interaction: CommandInteraction;
     public player: ShoukakuPlayer;
 
