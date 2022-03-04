@@ -11,7 +11,7 @@ export const execute = async( interaction ) => {
     const embed = new MessageEmbed()
         .setAuthor({ name: bot.client.user.tag, iconURL: bot.client.user.avatarURL({ size: 256 }) })
         .setColor('#29e3ab')
-        .setDescription(`\`\`\`js\n✉️ MESSAGE  : ${Date.now() - recieved}ms\n🔌WEBSOCKET : ${bot.client.ws.ping}ms\n🔑 API      : IN_DEVELOPMENT\`\`\``);
+        .setDescription(`\`\`\`js\n✉️ MESSAGE  : ${Date.now() - recieved}ms\n🔌WEBSOCKET : ${bot.client.ws.ping}ms\`\`\``);
 
     return interaction.reply({ embeds: [embed] });
 };

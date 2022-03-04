@@ -24,7 +24,7 @@ async function buildEmbed( song, interaction, player ): Promise<MessageEmbed> {
     return new MessageEmbed()
     .setTitle( song.track.info.title )
     .setThumbnail( interaction.guild.iconURL({ dynamic: true }) )
-    .setColor( '#5218fa' )
+    .setColor( '#7458ff' )
     .setAuthor({ name: song.track.info.author, url: song.track.info.uri })
     .addField( 'Заказал', '```\n' + await (await interaction.guild.members.cache.get( song.requester )).user.tag + '```' )
     .addFields(
